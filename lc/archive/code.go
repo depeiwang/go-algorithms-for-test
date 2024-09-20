@@ -167,3 +167,22 @@ func isPalindrome(x int) bool {
 	}
 	return reverse == origin
 }
+
+// https://leetcode.cn/problems/container-with-most-water/
+func maxArea(height []int) int {
+
+	max := 0
+	for i, j := 0, len(height)-1; i < j; {
+		area := min(height[i], height[j]) * (j - i)
+		if area > max {
+			max = area
+		}
+		// 在长度缩小的情况下，如果高度不变或者变小，那么面积一定变小
+		if height[i] < height[j] {
+			i++
+		} else {
+			j--
+		}
+	}
+	return max
+}
