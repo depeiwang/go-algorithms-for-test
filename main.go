@@ -1,13 +1,9 @@
 package main
 
-import (
-	"fmt"
-)
-
-func arr() []int {
-	return nil
-}
+import "fmt"
 
 func main() {
-	fmt.Println(len(arr()))
+	MIN := -1 << 31
+	MAX := (1 << 31) - 1
+	fmt.Println(MIN, MAX)
 }

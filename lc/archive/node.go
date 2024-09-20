@@ -1,4 +1,4 @@
-package lc
+package archive
 
 type ListNode struct {
 	Val  int
