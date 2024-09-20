@@ -121,3 +121,49 @@ func convert(s string, numRows int) string {
 	}
 	return string(result)
 }
+
+// https://leetcode.cn/problems/reverse-integer/description/
+func reverse(x int) int {
+	const MIN = (-1 << 31) / 10
+	const MAX = ((1 << 31) - 1) / 10
+	var res int
+
+	for x != 0 {
+		digit := x % 10
+		if res > MAX || (res == MAX && digit > 7) {
+			return 0
+		}
+		if res < MIN || (res == MIN && digit < -8) {
+			return 0
+		}
+		res = res*10 + x%10
+		x /= 10
+	}
+
+	return res
+}
+
+// https://leetcode.cn/problems/palindrome-number/description/
+func isPalindrome(x int) bool {
+	if x < 0 {
+		return false
+	}
+	if x < 10 {
+		return true
+	}
+	if x%10 == 0 {
+		return false
+	}
+	origin := x
+	const MAX = ((1 << 31) - 1) / 10
+	reverse := 0
+
+	for x > 0 {
+		if reverse > MAX {
+			return false
+		}
+		reverse = reverse*10 + x%10
+		x /= 10
+	}
+	return reverse == origin
+}
