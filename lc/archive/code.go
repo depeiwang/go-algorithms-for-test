@@ -186,3 +186,157 @@ func maxArea(height []int) int {
 	}
 	return max
 }
+
+// https://leetcode.cn/problems/integer-to-roman/
+func intToRoman(num int) string {
+	mapping := map[int]string{
+		1000: "M",
+		900:  "CM",
+		500:  "D",
+		400:  "CD",
+		100:  "C",
+		90:   "XC",
+		50:   "L",
+		40:   "XL",
+		10:   "X",
+		9:    "IX",
+		5:    "V",
+		4:    "IV",
+		1:    "I",
+	}
+	result := ""
+	for {
+		if num == 0 {
+			break
+		}
+		if num >= 1000 {
+			result += mapping[1000]
+			num -= 1000
+		} else if num >= 900 {
+			result += mapping[900]
+			num -= 900
+		} else if num >= 500 {
+			result += mapping[500]
+			num -= 500
+		} else if num >= 400 {
+			result += mapping[400]
+			num -= 400
+		} else if num >= 100 {
+			result += mapping[100]
+			num -= 100
+		} else if num >= 90 {
+			result += mapping[90]
+			num -= 90
+		} else if num >= 50 {
+			result += mapping[50]
+			num -= 50
+		} else if num >= 40 {
+			result += mapping[40]
+			num -= 40
+		} else if num >= 10 {
+			result += mapping[10]
+			num -= 10
+		} else if num >= 9 {
+			result += mapping[9]
+			num -= 9
+		} else if num >= 5 {
+			result += mapping[5]
+			num -= 5
+		} else if num >= 4 {
+			result += mapping[4]
+			num -= 4
+		} else {
+			result += mapping[1]
+			num--
+		}
+	}
+
+	return result
+}
+
+// https://leetcode.cn/problems/roman-to-integer/
+func romanToInt(s string) int {
+	mapping := map[string]int{
+		"I":  1,
+		"V":  5,
+		"X":  10,
+		"L":  50,
+		"C":  100,
+		"D":  500,
+		"M":  1000,
+		"IV": 4,
+		"IX": 9,
+		"XL": 40,
+		"XC": 90,
+		"CD": 400,
+		"CM": 900,
+	}
+	result := 0
+	for i := 0; i < len(s); i++ {
+		if i+1 < len(s) {
+			if v, ok := mapping[s[i:i+2]]; ok {
+				result += v
+				i++
+				continue
+			}
+		}
+		result += mapping[s[i:i+1]]
+	}
+	return result
+}
+
+// https://leetcode.cn/problems/longest-common-prefix/
+func longestCommonPrefix(strs []string) string {
+	minLen := len(strs[0])
+	for _, str := range strs[1:] {
+		if len(str) < minLen {
+			minLen = len(str)
+		}
+	}
+	if minLen == 0 {
+		return ""
+	}
+
+	for i := 0; i < minLen; i++ {
+		c := strs[0][i]
+		for _, str := range strs[1:] {
+			if str[i] != c {
+				return str[:i]
+			}
+		}
+	}
+	return strs[0][:minLen]
+}
+
+// https://leetcode.cn/problems/letter-combinations-of-a-phone-number/description/
+func letterCombinations(digits string) []string {
+	if len(digits) == 0 {
+		return []string{}
+	}
+	mapping := map[byte]string{
+		'2': "abc",
+		'3': "def",
+		'4': "ghi",
+		'5': "jkl",
+		'6': "mno",
+		'7': "pqrs",
+		'8': "tuv",
+		'9': "wxyz",
+	}
+	result := []string{""}
+	for i := 0; i < len(digits); i++ {
+		digit := digits[i]
+		letters, ok := mapping[digit]
+		if !ok {
+			continue
+		}
+		temp := make([]string, 0, len(result)*len(letters))
+		for _, prefix := range result {
+			for j := 0; j < len(letters); j++ {
+				temp = append(temp, prefix+string(letters[j]))
+			}
+		}
+		result = temp
+	}
+	return result
+}
