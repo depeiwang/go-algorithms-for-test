@@ -24,12 +24,7 @@ func LengthOfLongestSubstring(s string) int {
 	if len(s) == 0 {
 		return 0
 	}
-	max := func(a, b int) int {
-		if a > b {
-			return a
-		}
-		return b
-	}
+
 	result := 1
 	startAt, cursor := 0, 0
 	cache := map[byte]int{}
@@ -98,31 +93,80 @@ p 只包含从 a-z 的小写字母，以及字符 . 和 *。
 */
 // https://leetcode.cn/problems/regular-expression-matching/
 func isMatch(s string, p string) bool {
-	// TODO
-	sl := len(s)
-	j := 0
-	lastChar := byte(0)
-	match := true
-	for i := 0; i < sl; i++ {
-		pc := p[j]
-		if pc != '.' && pc != '*' {
-			if pc != s[i] {
-				match = false
-				break
+	ps := []string{}
+	for i := 0; i < len(p); i++ {
+		if i+1 < len(p) && p[i+1] == '*' {
+			newP := p[i : i+2]
+			if len(ps) > 0 {
+				lastP := ps[len(ps)-1]
+				if lastP != newP {
+					ps = append(ps, newP)
+				}
 			}
-			lastChar = pc
-			j++
-			continue
-		}
-		if pc == '.' {
-			lastChar = pc
-			j++
-			continue
-		}
-		if pc == '*' {
-
+			i++
+		} else {
+			ps = append(ps, p[i:i+1])
 		}
 	}
+	return false
+}
 
-	return match && lastChar != 0
+// https://leetcode.cn/problems/substring-with-concatenation-of-all-words/
+func findSubstring(s string, words []string) []int {
+	return nil
+}
+
+/*
+给你一个只包含 '(' 和 ')' 的字符串，找出最长有效（格式正确且连续）括号
+子串
+的长度。
+
+示例 1：
+输入：s = "(()"
+输出：2
+解释：最长有效括号子串是 "()"
+示例 2：
+
+输入：s = ")()())"
+输出：4
+解释：最长有效括号子串是 "()()"
+示例 3：
+
+输入：s = ""
+输出：0
+
+提示：
+0 <= s.length <= 3 * 10^4
+s[i] 为 '(' 或 ')'
+*/
+func longestValidParentheses(s string) int {
+	if len(s) <= 0 {
+		return 0
+	}
+	l := len(s)
+	if isValidParentheses(s[0:l]) {
+		return len(s)
+	}
+	return max(longestValidParentheses(s[1:l]), longestValidParentheses(s[0:l-1]))
+}
+
+func isValidParentheses(s string) bool {
+	stack := make([]byte, 0, len(s))
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+		if b == '(' || b == '[' || b == '{' {
+			stack = append(stack, b)
+			continue
+		}
+		if len(stack) > 0 {
+			last := stack[len(stack)-1]
+			if (b == ')' && last == '(') || (b == ']' && last == '[') || (b == '}' && last == '{') {
+				stack = stack[:len(stack)-1]
+				continue
+			}
+		}
+		stack = append(stack, b)
+	}
+
+	return len(stack) == 0
 }

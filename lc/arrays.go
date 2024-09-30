@@ -68,3 +68,34 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	}
 	return 0.0
 }
+
+// https://leetcode.cn/problems/next-permutation/
+func nextPermutation(nums []int) {
+	lastIdx := len(nums) - 1
+	lastVal := nums[lastIdx]
+
+	reverse := func(arr []int) {
+		for i, j := 0, len(arr)-1; i < j; {
+			arr[i], arr[j] = arr[j], arr[i]
+			i++
+			j--
+		}
+	}
+
+	// 从后往前找到第一个递增的数
+	for i := lastIdx - 1; i >= 0; i-- {
+		if nums[i] < lastVal {
+			// 从后往前找到第一个比nums[i]大的数
+			for j := lastIdx; j > i; j-- {
+				if nums[j] > nums[i] {
+					nums[i], nums[j] = nums[j], nums[i]
+					// 交换后，i后面的数需要重新排序
+					reverse(nums[i+1:])
+					return
+				}
+			}
+		}
+		lastVal = nums[i]
+	}
+	reverse(nums)
+}

@@ -80,14 +80,6 @@ func myAtoi(s string) int {
 	return num * sign
 }
 
-/*
-n=5, d=2n-2=8
-0     8         16  --> rowNum=0 [a0=rowNum]
-1   7 9      15 17  --> rowNum=1 [a0=rowNum, a0=d-rowNum]
-2  6  10   14   18  --> rowNum=2 [a0=rowNum, a0=d-rowNum]
-3 5   11 13     19  --> rowNum=3 [a0=rowNum, a0=d-rowNum]
-4     12        20  --> rowNum=4 [a0=rowNum]
-*/
 // https://leetcode.cn/problems/zigzag-conversion/description/
 func convert(s string, numRows int) string {
 	totalLen := len(s)
@@ -339,4 +331,202 @@ func letterCombinations(digits string) []string {
 		result = temp
 	}
 	return result
+}
+
+// https://leetcode.cn/problems/remove-nth-node-from-end-of-list/
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	dummy := &ListNode{Next: head}
+	slow, fast := dummy, head
+	for i := 0; i < n; i++ {
+		fast = fast.Next
+	}
+	// 将 fast 剩余节点扫描完毕, 即表示 slow 到达倒数第 n 个节点
+	for fast != nil {
+		slow, fast = slow.Next, fast.Next
+	}
+	slow.Next = slow.Next.Next
+	return dummy.Next
+}
+
+// https://leetcode.cn/problems/valid-parentheses/
+func isValidParentheses(s string) bool {
+	stack := make([]byte, 0, len(s))
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+		if b == '(' || b == '[' || b == '{' {
+			stack = append(stack, b)
+			continue
+		}
+		if len(stack) > 0 {
+			last := stack[len(stack)-1]
+			if (b == ')' && last == '(') || (b == ']' && last == '[') || (b == '}' && last == '{') {
+				stack = stack[:len(stack)-1]
+				continue
+			}
+		}
+		stack = append(stack, b)
+	}
+
+	return len(stack) == 0
+}
+
+// https://leetcode.cn/problems/merge-two-sorted-lists/
+func mergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
+	result := &ListNode{}
+	cursor := result
+	for {
+		if list1 == nil && list2 == nil {
+			break
+		}
+		if list1 == nil {
+			cursor.Next = list2
+			break
+		}
+		if list2 == nil {
+			cursor.Next = list1
+			break
+		}
+		if list1.Val < list2.Val {
+			cursor.Next = list1
+			list1 = list1.Next
+		} else {
+			cursor.Next = list2
+			list2 = list2.Next
+		}
+		cursor = cursor.Next
+	}
+	return result.Next
+}
+
+// https://leetcode.cn/problems/generate-parentheses/
+func generateParenthesis(n int) []string {
+	var result []string
+	generateParenthesis_backtrack("", 0, 0, n, &result)
+	return result
+}
+func generateParenthesis_backtrack(s string, open, close, max int, result *[]string) {
+	if len(s) == max*2 {
+		*result = append(*result, s)
+		return
+	}
+	if open < max {
+		generateParenthesis_backtrack(s+"(", open+1, close, max, result)
+	}
+	if close < open {
+		generateParenthesis_backtrack(s+")", open, close+1, max, result)
+	}
+}
+
+// https://leetcode.cn/problems/merge-k-sorted-lists/description/
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) == 0 {
+		return nil
+	}
+	results := lists
+	for {
+		temp := make([]*ListNode, 0, len(results)/2+1)
+		for i := 0; i < len(results); i += 2 {
+			if i+1 < len(results) {
+				temp = append(temp, mergeTwoLists(results[i], results[i+1]))
+			} else {
+				temp = append(temp, results[i])
+			}
+		}
+		if len(temp) == 1 {
+			return temp[0]
+		}
+		results = temp
+	}
+}
+
+// https://leetcode.cn/problems/swap-nodes-in-pairs/
+func swapPairs(head *ListNode) *ListNode {
+	return reverseKGroup(head, 2)
+}
+
+// https://leetcode.cn/problems/reverse-nodes-in-k-group/
+func reverseKGroup(head *ListNode, k int) *ListNode {
+	curr := head
+	count := 0
+
+	// Check if there are at least k nodes left in the linked list
+	for curr != nil && count < k {
+		curr = curr.Next
+		count++
+	}
+
+	// If we have k nodes, then we reverse them
+	if count == k {
+		// Reverse first k nodes
+		reversedHead := reverseKNodes(head, k)
+		// head is now the end of the reversed group, connect it with the result of next reversal
+		head.Next = reverseKGroup(curr, k)
+		return reversedHead
+	} else {
+		// Less than k nodes, return head as is
+		return head
+	}
+}
+
+// Helper function to reverse k nodes
+func reverseKNodes(head *ListNode, k int) *ListNode {
+	var prev *ListNode = nil
+	curr := head
+	next := (*ListNode)(nil)
+	count := 0
+
+	// Reverse k nodes
+	for count < k {
+		next = curr.Next
+		curr.Next = prev
+		prev = curr
+		curr = next
+		count++
+	}
+	// prev is the new head of the reversed list
+	return prev
+}
+
+// https://leetcode.cn/problems/remove-duplicates-from-sorted-array/
+func removeDuplicates(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+	slow := 0
+	for fast := 1; fast < len(nums); fast++ {
+		if nums[slow] != nums[fast] {
+			slow++
+			nums[slow] = nums[fast]
+		}
+	}
+	return slow + 1
+}
+
+// https://leetcode.cn/problems/remove-element/
+func removeElement(nums []int, val int) int {
+	left, right := 0, len(nums)
+	for left < right {
+		if nums[left] == val {
+			nums[left] = nums[right-1]
+			right--
+		} else {
+			left++
+		}
+	}
+	return right
+}
+
+// https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/description/
+func strStr(haystack string, needle string) int {
+	for i := 0; i <= len(haystack)-len(needle); i++ {
+		for j := 0; j < len(needle); j++ {
+			if haystack[i+j] != needle[j] {
+				break
+			}
+			if j == len(needle)-1 {
+				return i
+			}
+		}
+	}
+	return -1
 }

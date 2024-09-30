@@ -30,5 +30,16 @@ nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0 。
 */
 // https://leetcode.cn/problems/3sum/description/
 func threeSum(nums []int) [][]int {
-	return nil
+	results := make([][]int, 0)
+	for i := 0; i < len(nums); i++ {
+		for j := i + 1; j < len(nums); j++ {
+			for k := j + 1; k < len(nums); k++ {
+				if nums[i]+nums[j]+nums[k] == 0 {
+					result := []int{nums[i], nums[j], nums[k]}
+					results = append(results, result)
+				}
+			}
+		}
+	}
+	return results
 }
